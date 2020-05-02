@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <section class="section-header">
+        <header><h1>Welcome to the Joke API!</h1></header>
+    </section>
+    <section class="cat-type-styles">
+        <div class="row row-selection-style">
+            <div class="col">
+
+                <h2>Category</h2>
+                <select class="category" id="selectCat" onchange="onChangeValue();">
+                    <option value="any">Any</option>
+                    <option value="miscellaneous">Miscellaneous</option>
+                    <option value="dark">Dark</option>
+                    <option value="programming">Programming</option>
+                </select>
+                <h2>Types of jokes you don't accept</h2>
+                <select class="type" id="unacceptable" onchange="onChangeValue();">
+                    <option value="nsfw">NSFW</option>
+                    <option value="religious">Religious</option>
+                    <option value="political">Political</option>
+                </select>
+            </div>
+            
+            <div class="col jokes-view">
+                
+                <h2 class="setup"></h2>
+                <h2 class="joke" style="display: none;"></h2>
+                <h2 class="delivery"></h2>
+                
+                <canvas id="myCanvas" width="560px" height="330px"></canvas>
+            </div>
+        </div>
+    </section>
+            <section class="gif-section">
+                <div class="row animation-row">
+            <img src="unnamed.png" class="tree">
+            <img src="boulder-drawing-bush-6.png" class="tree-one">
+            <img src="unnamed (1).png" class="tree-two">
+
+            <div class="col">
+                <img src="naruto.gif" class="fighter-image-one">
+            </div>
+            <div class="col">
+                <img src="sasuke.gif" class="fighter-image-two">
+            </div>
+            <div class="col">
+                <img src="kakashi.gif" class="fighter-image-three">
+            </div>
+        </div>
+    </section>
+
+</body>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <script>
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+
+        var gr = ctx.createLinearGradient(0, 0, 350, 200);
+
+        let color = Array("SEAGREEN", "NAVAJOWHITE", "SALMON","DARKRED","TOMATO","ORANGE","DARKKHAKI","DARKSLATEGRAY","GOLDENROD","MIDNIGHTBLUE","ORANGERED","GREENYELLOW", "PERU","OLIVE","MEDIUMVIOLETRED","TEAL","INDIANRED","black");
+
+        gr.addColorStop("0", color[Math.floor(Math.random() * color.length)]);
+        gr.addColorStop("0.4", color[Math.floor(Math.random() * color.length)]);
+        gr.addColorStop("0.7", color[Math.floor(Math.random() * color.length)]);
+        gr.addColorStop("1.0", color[Math.floor(Math.random() * color.length)]); 
+
+        ctx.linewidth=5;
+        ctx.strokeStyle = gr;
+
+        ctx.beginPath();
+        // ctx.arc(205, 205, 200, 0, 2 * Math.PI);
+        ctx.rect(0,50,530,275);
+        ctx.stroke();
+
+        function onChangeValue(){
+            
+            //Category
+            var select = document.getElementById("selectCat").value;
+
+            //Type
+            var unacceptableJokes = document.getElementById("unacceptable").value;
+            
+            let url = "https://sv443.net/jokeapi/category/"+select+"?blacklistFlags="+unacceptableJokes;
+    
+    
+    
+            $.ajax({
+                method: "GET",
+                url: url
+            }).done(function (res) {
+                if(res.type =="twopart"){
+                    $(".setup").html("");
+                    $(".delivery").html("");
+                    $(".joke").html("");
+                    $(".setup").html(res.setup);
+                    $(".delivery").html(res.delivery);
+
+                } else if (res.type == "single") {
+                    $(".setup").html("");
+                    $(".delivery").html("");
+                    $(".joke").html("");
+                    $(".joke").css("display","inline");
+                    $(".joke").html(res.joke);
+
+                }
+            });
+        }
+    </script>
+
+</html>
